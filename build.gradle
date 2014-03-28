@@ -1,0 +1,63 @@
+apply plugin: 'java'
+apply plugin: 'liquibase'
+apply plugin: 'properties'
+
+sourceCompatibility = 1.7
+version = '1.0.1'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.liquibase:liquibase-core:2.0.5'
+        classpath ('com.augusttechgroup:gradle-liquibase-plugin:0.7') {
+            exclude group: 'org.liquibase', module: 'liquibase-core'
+        }
+        classpath 'org.postgresql:postgresql:9.2-1004-jdbc41'
+        classpath 'net.saliman:gradle-properties-plugin:1.2.0'
+    }
+}
+
+liquibase {
+    changelogs {
+        main {
+            file = file('src/main/liquibase/db-changelog.xml')
+        }
+    }
+    databases {
+        jdbc {
+            url = "$jdbcUrl"
+            username = "$jdbcUsername"
+            password = "$jdbcPassword"
+        }
+    }
+    defaultDatabase = databases.jdbc
+}
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "http://maven.boundary.com/artifactory/external"
+    }
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    testCompile 'org.slf4j:slf4j-jdk14:1.7.5'
+    testCompile 'org.liquibase:liquibase-core:3.1.1'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile "org.hamcrest:hamcrest-library:1.3"
+    testCompile "org.hamcrest:hamcrest-integration:1.3"
+    testCompile 'net.sf.trove4j:trove4j:3.0.3'
+    testCompile 'com.h2database:h2:1.3.175'
+    testCompile 'com.jolbox:bonecp:0.8.0.RELEASE'
+    testCompile 'org.slf4j:slf4j-jdk14:1.7.6'
+    testCompile 'org.slf4j:slf4j-api:1.7.6'
+    testCompile 'com.boundary:high-scale-lib:1.0.4'
+}
+
+task printProperties << {
+    println "$jdbcUrl"
+}
